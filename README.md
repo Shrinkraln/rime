@@ -97,8 +97,9 @@ python3 tools/add_words.py --delete "张三"
 bash scripts/deploy.sh    # 改完重新部署生效
 ```
 
-原理：`rime_ice.custom.yaml` 把主词库替换为 `my_words`，后者先加载你的词条、
-再 `import_tables: [rime_ice]` 导入雾凇全部词库；重复词条以最上面的权重为准，所以你的词条永远优先。
+原理：`rime_ice.custom.yaml` 把 `my_words` 挂载为独立翻译器（`initial_quality: 10`，
+高于主拼音词库 1.2、低于置顶短语 99），个人词候选永远排在普通词前面，
+且主词库仍是上游原版 `rime_ice`，上游更新与产物重建互不干扰。
 
 ### 个人置顶短语 my_phrase.txt（永远第一，不参与组句）
 
@@ -122,7 +123,7 @@ bash scripts/deploy.sh    # 改完重新部署生效
 |---|---|---|
 | 个人置顶短语 my_phrase | 永远第一 | `user/my_phrase.txt` |
 | 上游置顶 custom_phrase / pin_cand | 永远第一 | 上游文件 |
-| **个人词条权重** | 你的词压过上游词 | `user/my_words.dict.yaml` |
+| **个人词条（独立翻译器）** | 你的词压过上游词 | `user/my_words.dict.yaml` |
 | **上游词库词频** | 800 万字语料统计的基础排序 | 子模块 cn_dicts/* |
 | **用户词典自动学习** | 输入过的词按使用次数自动提权 | `rime_ice.userdb.txt` |
 | 长词优先 / 智能组句 / 英文降权 | 整句质量与候选体验 | 上游 lua 配置 |

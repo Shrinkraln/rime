@@ -7,11 +7,17 @@
 
 patch:
   # ── 个人词库 ──────────────────────────────────────────────
-  # 主词库替换为 my_words.dict.yaml：
-  #   my_words 先加载你自己的词条（文件底部 ... 之后），再导入雾凇拼音全部词库。
-  #   相同词条以「最上面的权重」生效，所以你的个人词条权重优先于上游。
-  # 想回到上游原版词库：删除下面这行，重新部署即可。
-  "translator/dictionary": my_words
+  # 以独立翻译器挂载 my_words.dict.yaml（不动主词库 rime_ice，上游产物始终自动重建）：
+  #   个人词条的候选权重统一高于主拼音词库（initial_quality 10 > 1.2），
+  #   低于置顶短语（99），因此个人词永远排在普通词前面、置顶短语之后。
+  # 想回到上游原版词库：删除 my_words 翻译器相关几行，重新部署即可。
+  "engine/translators/@before 5": table_translator@my_words
+  my_words:
+    dictionary: my_words
+    enable_user_dict: false   # 个人词库按固定权重排序，不单独建用户词典
+    enable_sentence: false    # 个人词不参与组句（保证置顶效果稳定）
+    initial_quality: 10       # 高于主拼音 1.2、低于置顶短语 99
+
   # 用户词典固定用 rime_ice 这个名字，与历史词频数据保持连续
   # （运行时文件：rime_ice.userdb.txt / rime_ice.userdb/，由 scripts/save.sh 备份进仓库）
   "translator/user_dict": rime_ice

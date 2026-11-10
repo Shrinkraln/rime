@@ -54,6 +54,15 @@ if [[ -f "$REPO_DIR/user/rime_ice.userdb.txt" && ! -f "$RIME_DIR/rime_ice.userdb
 fi
 
 # 4) 重新构建（编译 prism/bin、把用户词典快照写入 LevelDB）
+# 若上游词库源文件比已编译产物新（例如刚更新子模块），先清掉产物强制全量重建。
+# 必须显式检查：主词库被 patch 成 my_words 后，rime_deployer 不会自动重建其
+# import 的 rime_ice 等词库的旧产物。
+if [[ -f "$RIME_DIR/build/rime_ice.table.bin" ]] &&
+   find "$SOURCE_DIR/cn_dicts" "$SOURCE_DIR/en_dicts" -name '*.dict.yaml' \
+     -newer "$RIME_DIR/build/rime_ice.table.bin" 2>/dev/null | grep -q .; then
+  rm -f "$RIME_DIR"/build/*.bin
+  echo "== 词库源有更新，强制全量重建 =="
+fi
 echo "== rime_deployer --build =="
 rime_deployer --build "$RIME_DIR"
 
