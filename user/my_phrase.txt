@@ -1,0 +1,18 @@
+# Rime table
+# coding: utf-8
+#@/db_name	my_phrase.txt
+#@/db_type	tabledb
+#
+# 个人置顶短语：这里面的词条永远排在候选项最前面
+# （由 user/rime_ice.custom.yaml 中的 table_translator@my_phrase 挂载，initial_quality: 99）
+#
+# 格式（Tab 分隔）：词汇<Tab>编码<Tab>权重
+#   - 编码建议用简拼或自定义编码（避免与完整拼音相同，否则该词无法参与造句）
+#   - 权重越大越靠前（默认 1）
+#   - 与上游 custom_phrase.txt 的区别：本文件是你的私人短语，上游更新不会碰它
+#
+# 示例（去掉行首 # 生效）：
+# 张三	zs	9
+# 李四	ls	8
+# 公司邮箱	gsyx	5
+# 微信号	wxh	5

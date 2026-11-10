@@ -1,0 +1,43 @@
+# 雾凇拼音个性化补丁
+#
+# 原理：Rime 的 patch 机制。本文件与上游 rime_ice.schema.yaml 同名加 .custom 后缀，
+# 部署时自动合并，只覆盖这里列出的选项，上游更新完全不受影响。
+#
+# 修改后运行：scripts/deploy.sh
+
+patch:
+  # ── 个人词库 ──────────────────────────────────────────────
+  # 主词库替换为 my_words.dict.yaml：
+  #   my_words 先加载你自己的词条（文件底部 ... 之后），再导入雾凇拼音全部词库。
+  #   相同词条以「最上面的权重」生效，所以你的个人词条权重优先于上游。
+  # 想回到上游原版词库：删除下面这行，重新部署即可。
+  "translator/dictionary": my_words
+  # 用户词典固定用 rime_ice 这个名字，与历史词频数据保持连续
+  # （运行时文件：rime_ice.userdb.txt / rime_ice.userdb/，由 scripts/save.sh 备份进仓库）
+  "translator/user_dict": rime_ice
+
+  # ── 常用词排序优化 ────────────────────────────────────────
+  # 用户词典自动学习：输入过的词自动记录、按使用次数提权（上游默认已开，这里显式声明）
+  "translator/enable_user_dict": true
+  # 智能组句：整句输入时按语言模型排序（上游默认已开，这里显式声明）
+  "translator/enable_sentence": true
+  # 长词优先：把 2 个长词提升到候选项第 4、5 位（上游默认值；喜欢更多长词可调大）
+  # "long_word_filter/count": 3
+
+  # ── 个人置顶短语 ─────────────────────────────────────────
+  # 额外挂载一个只读短语翻译器：user/my_phrase.txt 里的词条永远排在候选项最前
+  # （文件格式：词汇<Tab>编码<Tab>权重，权重越大越靠前）
+  "engine/translators/@before 5": table_translator@my_phrase
+  my_phrase:
+    dictionary: ""
+    user_dict: my_phrase
+    db_class: stabledb        # 按文件内顺序固定；想按使用频率动态调频改为 tabledb
+    enable_completion: false
+    enable_sentence: false
+    initial_quality: 99       # 远高于拼音(1.2)和英文(1.1)，保证置顶
+
+  # ── 置顶候选项 ───────────────────────────────────────────
+  # 输入某编码时指定字词永远第一。格式见上游 pin_cand_filter.lua 头部注释。
+  # 示例（取消注释生效）：输入 wb 时「微博 微信」排最前
+  # "pin_cand_filter/@append 0":
+  #   - "wb\t微博 微信"

@@ -1,0 +1,26 @@
+# Rime dictionary
+# encoding: utf-8
+# 个人词库：先加载你自己的词条，再导入雾凇拼音全部词库。
+# 相同词条以「最上面的权重」生效 → 你的词条权重优先于上游词库。
+#
+# 词条格式（Tab 分隔）：词语<Tab>拼音编码<Tab>词频权重
+#   - 编码用全拼、音节之间用空格分隔；多音字按实际读音注音，如「重庆」→ chong qing
+#   - 权重越大越靠前。上游词库权重多在几万~几百万，个人常用词建议 1000000 起
+#   - 快捷添加：python3 tools/add_words.py "词语" [权重] [拼音]
+#
+# 注意：本文件由 tools/add_words.py 管理时，会把词条按权重从高到低重新排序；
+# 手工编辑同样有效，运行脚本后顺序会被整理。
+---
+name: my_words
+version: "2026-11-10"
+sort: by_weight
+use_preset_vocabulary: true
+import_tables:
+  - rime_ice
+...
+
+# ── 在此添加你的个人词条（示例已注释，取消注释并改成自己的词）──
+# 张三	zhang san	1000000
+# 李四	li si	1000000
+# 重庆	chong qing	2000000
+# 雾凇拼音	wu song pin yin	3000000

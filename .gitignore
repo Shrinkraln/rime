@@ -1,0 +1,9 @@
+# librime 引擎源码（由 scripts/build-librime.sh 按版本克隆构建，不入库）
+engine/
+
+# Python
+__pycache__/
+*.pyc
+
+# 用户词典二进制（LevelDB），只提交可 diff 的文本快照 *.userdb.txt
+user/rime_ice.userdb/

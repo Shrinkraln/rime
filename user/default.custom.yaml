@@ -1,0 +1,15 @@
+# 全局配置补丁：影响所有方案（雾凇拼音也继承这里）
+# 修改后运行 scripts/deploy.sh 重新部署即可生效。
+
+patch:
+  # 方案列表：只编译列出的方案（部署更快，Ctrl+` 方案选单更清爽）。
+  # 需要双拼时把对应方案加进来，例如 double_pinyin_flypy（小鹤双拼）、
+  # double_pinyin_mspy（微软双拼）等，见上游 rime-ice/default.yaml 的完整列表。
+  "schema_list":
+    - schema: rime_ice
+
+  # 候选页每页 7 个候选词（上游默认 5）
+  "menu/page_size": 7
+
+  # 只有一个方案时展开方案选单（上游默认折叠）
+  "switcher/fold_options": false
