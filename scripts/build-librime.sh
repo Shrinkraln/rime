@@ -37,11 +37,20 @@ fi
 
 # 3) 配置 + 构建
 echo "== 构建 librime $VERSION（前缀 $PREFIX）=="
+# 三个 Ubuntu 22.04 兼容性标志：
+#   LINUX=ON —— 上游用 if(LINUX) 判断平台，该变量在本机 cmake 求值为假，
+#      导致 find_package(Boost) 不请求 regex 组件、链接时缺 libboost_regex
+#   Boost_NO_BOOST_CMAKE=ON —— 系统 boost 的 cmake 配置目标有缺陷（locale 拒绝
+#      debug-runtime 变体），改用经典头文件+库文件查找模式
+#   ENABLE_LOGGING=OFF —— 系统 glog 0.5 缺少 librime 1.17 需要的 API，禁用引擎日志
 cmake -S "$ENGINE_DIR" -B "$ENGINE_DIR/build" -G Ninja \
   -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_INSTALL_PREFIX="$PREFIX" \
   -DBUILD_TEST=OFF \
-  -DBUILD_MERGED_PLUGINS=ON
+  -DBUILD_MERGED_PLUGINS=ON \
+  -DLINUX=ON \
+  -DBoost_NO_BOOST_CMAKE=ON \
+  -DENABLE_LOGGING=OFF
 
 cmake --build "$ENGINE_DIR/build" -j"$(nproc)"
 
